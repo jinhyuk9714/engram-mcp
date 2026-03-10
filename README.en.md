@@ -322,6 +322,8 @@ lib/admin/                API key management
 lib/http/                 HTTP/SSE utilities
 lib/logging/              Audit logs and access history
 config/memory.js          Ranking, TTL, GC, and pagination settings
+scripts/                  Setup and support scripts
+docs/skills/              Agent skill documents
 INSTALL.md                Korean installation guide
 docs/                     Additional design documents
 ```

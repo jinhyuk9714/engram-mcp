@@ -3,7 +3,10 @@
 ## Quick Start (Interactive Setup Script)
 
 ```bash
-bash setup.sh
+bash scripts/setup.sh
+
+# Compatibility path
+# bash setup.sh
 ```
 
 Guides you through `.env` creation, `npm install`, and DB schema setup step by step.

@@ -294,6 +294,8 @@ lib/admin/                API 키 관리
 lib/http/                 HTTP/SSE 유틸리티
 lib/logging/              감사 로그 및 접근 이력
 config/memory.js          랭킹/TTL/GC/페이지네이션 설정
+scripts/                  setup 및 보조 스크립트
+docs/skills/              에이전트 스킬 문서
 INSTALL.md                설치 및 연결 가이드
 docs/                     추가 설계 문서
 ```
