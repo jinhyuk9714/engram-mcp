@@ -1,0 +1,31 @@
+{
+  "name": "engram-mcp",
+  "version": "1.2.0",
+  "license": "Apache-2.0",
+  "description": "Fragment-based memory MCP server for durable agent context.",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "lint": "eslint .",
+    "test": "LOG_DIR=tmp/test-logs NODE_ENV=test node --test tests/unit/*.test.js tests/integration/pipeline-overhaul.test.js",
+    "test:db": "LOG_DIR=tmp/test-logs NODE_ENV=test node --test tests/integration/temporal.test.js",
+    "backfill:embeddings": "node lib/memory/backfill-embeddings.js"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "^3.8.1",
+    "@modelcontextprotocol/sdk": "^1.27.1",
+    "ioredis": "^5.9.3",
+    "js-tiktoken": "^1.0.21",
+    "node-fetch": "^3.3.2",
+    "openai": "^6.21.0",
+    "pg": "^8.18.0",
+    "prom-client": "^15.1.3",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "jest": "^30.2.0"
+  }
+}
