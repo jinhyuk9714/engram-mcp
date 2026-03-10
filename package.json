@@ -1,12 +1,12 @@
 {
   "name": "@jinhyuk9714/engram-mcp",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "license": "Apache-2.0",
   "description": "에이전트 장기 컨텍스트를 위한 파편 기반 기억 MCP 서버",
   "main": "server.js",
   "type": "module",
   "bin": {
-    "engram-mcp": "./bin/engram-mcp.js"
+    "engram-mcp": "bin/engram-mcp.js"
   },
   "publishConfig": {
     "access": "public"
@@ -16,6 +16,7 @@
   },
   "files": [
     "bin/",
+    "config/",
     "lib/",
     "assets/images/",
     "server.js",
