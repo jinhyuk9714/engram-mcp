@@ -1,19 +1,40 @@
 # Refactoring Backlog
 
-## Next Structural Candidates
+## Current Structure
 
 ### MemoryManager
 
-`MemoryManager` still mixes write commands (`remember`, `amend`, `forget`), read queries (`recall`, `context`, `fragmentHistory`, `graphExplore`), and session reflection workflows (`reflect`, `_consolidateSessionFragments`, `_autoLinkSessionFragments`).
-
-A follow-up refactor should split it into:
-
-- command-oriented memory writes
-- query-oriented retrieval/context services
-- session reflection/orchestration services
+`MemoryManager` is now a facade over dedicated write, query, and session services. Public MCP-facing methods stay on the manager, while implementation lives under `lib/memory/manager/`.
 
 ### MemoryConsolidator
 
-`MemoryConsolidator` remains a long stage pipeline with duplicate merging, TTL transitions, contradiction handling, supersession detection, feedback generation, and stale-fragment cleanup in one class.
+`MemoryConsolidator` is now a stage orchestrator. The maintenance pipeline lives under `lib/memory/consolidator/` with an explicit order:
 
-A follow-up refactor should move each maintenance stage behind a named step interface so the pipeline order is explicit, easier to test in isolation, and easier to disable or run selectively.
+- `LifecycleStage`
+- `ReshapeStage`
+- `LinkingStage`
+- `ScoringStage`
+- `ContradictionStage`
+- `ReportingStage`
+
+## Next Structural Candidates
+
+### ContradictionStage internal split
+
+`ContradictionStage` still owns candidate selection, NLI/Gemini escalation, contradiction resolution, supersession detection, and pending-queue replay in one unit.
+
+If behavior changes start concentrating there, the next split should separate:
+
+- candidate discovery and filtering
+- contradiction/supersession resolution policies
+- Redis-backed pending queue replay
+
+### ReportingStage internal split
+
+`ReportingStage` still bundles feedback report generation, Redis index pruning, stale-fragment collection, and stale reflection cleanup.
+
+If reporting rules and cleanup cadence diverge, it should split into:
+
+- feedback analytics/report generation
+- index hygiene and stale-fragment collection
+- reflection-specific cleanup
