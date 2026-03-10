@@ -1,31 +1,3 @@
-<p align="center">
-  <img src="assets/images/engram_mcp_logo_transparent.png" width="360" alt="Engram MCP Logo">
-</p>
-
-<p align="center">
-  <a href="https://github.com/jinhyuk9714/engram-mcp">
-    <img src="https://img.shields.io/badge/repo-jinhyuk9714%2Fengram--mcp-111827?style=flat&logo=github" alt="GitHub Repository" />
-  </a>
-  <a href="https://github.com/jinhyuk9714/engram-mcp/releases">
-    <img src="https://img.shields.io/github/v/release/jinhyuk9714/engram-mcp?style=flat&label=release&color=4c8bf5" alt="GitHub Release" />
-  </a>
-  <a href="https://github.com/jinhyuk9714/engram-mcp/issues">
-    <img src="https://img.shields.io/github/issues/jinhyuk9714/engram-mcp?style=flat&color=e05d44" alt="GitHub Issues" />
-  </a>
-  <a href="LICENSE">
-    <img src="https://img.shields.io/badge/license-Apache%202.0-blue?style=flat" alt="License" />
-  </a>
-</p>
-
-<p align="center">
-  <img src="https://img.shields.io/badge/Node.js-%3E%3D20-339933?style=flat&logo=node.js&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/PostgreSQL-pgvector%20HNSW-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/Redis-Optional%20L1%20Cache-DC382D?style=flat&logo=redis&logoColor=white" alt="Redis" />
-  <img src="https://img.shields.io/badge/MCP-2025--11--25%20%7C%202025--06--18-7c3aed?style=flat" alt="MCP Protocol" />
-  <img src="https://img.shields.io/badge/transport-Streamable%20HTTP%20%7C%20Legacy%20SSE-0ea5e9?style=flat" alt="Transport" />
-  <img src="https://img.shields.io/badge/auth-Bearer%20%7C%20OAuth%202.0%20PKCE-f59e0b?style=flat" alt="Auth" />
-</p>
-
 # Engram MCP
 
 **Fragment-based memory MCP server for durable agent context.**
