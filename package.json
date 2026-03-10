@@ -1,15 +1,40 @@
 {
-  "name": "engram-mcp",
+  "name": "@jinhyuk9714/engram-mcp",
   "version": "1.2.0",
   "license": "Apache-2.0",
-  "description": "Fragment-based memory MCP server for durable agent context.",
+  "description": "에이전트 장기 컨텍스트를 위한 파편 기반 기억 MCP 서버",
   "main": "server.js",
   "type": "module",
+  "bin": {
+    "engram-mcp": "./bin/engram-mcp.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "bin/",
+    "lib/",
+    "assets/images/",
+    "server.js",
+    "README.md",
+    "README.en.md",
+    "README.simple.md",
+    "INSTALL.md",
+    "INSTALL.en.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
+    ".env.example",
+    "scripts/setup.sh"
+  ],
   "scripts": {
-    "start": "node server.js",
+    "start": "node ./bin/engram-mcp.js serve",
     "lint": "eslint .",
-    "test": "LOG_DIR=tmp/test-logs NODE_ENV=test node --test tests/unit/*.test.js tests/integration/pipeline-overhaul.test.js",
-    "test:db": "LOG_DIR=tmp/test-logs NODE_ENV=test node --test tests/integration/temporal.test.js",
+    "test": "LOG_DIR=tmp/test-logs NODE_ENV=test node --test tests/unit/*.test.js tests/integration/pipeline-overhaul.test.js tests/integration/stdio-explicit-db.test.js",
+    "test:db": "LOG_DIR=tmp/test-logs NODE_ENV=test node --test tests/integration/temporal.test.js tests/integration/stdio-explicit-db.test.js",
+    "test:e2e:docker": "LOG_DIR=tmp/test-logs NODE_ENV=test node --test tests/e2e/docker-bootstrap.test.js",
     "backfill:embeddings": "node lib/memory/backfill-embeddings.js"
   },
   "dependencies": {

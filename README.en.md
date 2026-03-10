@@ -202,17 +202,36 @@ Optional components improve semantic search and evaluation quality.
 ### Requirements
 
 - Node.js 20+
-- PostgreSQL 14+ with `pgvector`
+- Docker Desktop or PostgreSQL 14+ with `pgvector`
 - Redis 6+ (optional)
 
-### Installation
+### One-line usage (default stdio mode)
+
+```bash
+npx -y @jinhyuk9714/engram-mcp
+```
+
+When no DB connection settings are present, Engram MCP bootstraps a local PostgreSQL container automatically on macOS and Linux. A minimal MCP client configuration looks like this:
+
+```json
+{
+  "mcpServers": {
+    "engram": {
+      "command": "npx",
+      "args": ["-y", "@jinhyuk9714/engram-mcp"]
+    }
+  }
+}
+```
+
+### Repository install / HTTP self-host
 
 ```bash
 npm install
 cp .env.example .env
 ```
 
-For installation, migrations, client setup, and hook integration, see **[INSTALL.en.md](INSTALL.en.md)**.
+For installation, migrations, stdio usage, and HTTP self-host setup, see **[INSTALL.en.md](INSTALL.en.md)**.
 
 ### Minimal configuration example
 
@@ -220,11 +239,7 @@ For installation, migrations, client setup, and hook integration, see **[INSTALL
 PORT=57332
 MEMENTO_ACCESS_KEY=your-master-key
 
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB=your_db
-POSTGRES_USER=your_user
-POSTGRES_PASSWORD=your_password
+DATABASE_URL=postgresql://your_user:your_password@localhost:5432/your_db
 
 REDIS_ENABLED=false
 ```
@@ -239,10 +254,18 @@ OPENAI_API_KEY=sk-...
 ### Run
 
 ```bash
+npx -y @jinhyuk9714/engram-mcp
+```
+
+The default execution path starts the stdio MCP server. The HTTP server is still available:
+
+```bash
+npx -y @jinhyuk9714/engram-mcp serve
+# or inside the repository
 npm start
 ```
 
-The default port is `57332`.
+The default HTTP port is `57332`.
 
 ---
 
@@ -250,14 +273,16 @@ The default port is `57332`.
 
 ```bash
 npm start
-npm lint
+npm run lint
 npm test
 npm run test:db
+npm run test:e2e:docker
 npm run backfill:embeddings
 ```
 
 - `npm test`: unit tests plus safe local integration tests
 - `npm run test:db`: integration tests that require a PostgreSQL connection
+- `npm run test:e2e:docker`: Docker auto-bootstrap end-to-end test
 - `npm run backfill:embeddings`: bulk-generate embeddings for existing fragments
 
 ---
@@ -313,8 +338,11 @@ Admin API key dashboard endpoints are available under `/v1/internal/model/nothin
 ## Project structure
 
 ```text
+bin/engram-mcp.js         stdio/serve CLI entry point
 server.js                 HTTP server entry point
+lib/cli/                  runtime resolution and Docker bootstrap
 lib/jsonrpc.js            JSON-RPC parsing and method dispatch
+lib/mcp/                  shared MCP surface and stdio server
 lib/tool-registry.js      MCP tool registration and routing
 lib/tools/                MCP tool implementations
 lib/memory/               Core memory system logic

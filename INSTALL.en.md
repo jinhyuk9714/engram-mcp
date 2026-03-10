@@ -1,6 +1,31 @@
 # Installation Guide
 
-## Quick Start (Interactive Setup Script)
+## One-line usage (recommended)
+
+This is the default path if you want to connect immediately without managing a `.env` first.
+
+```json
+{
+  "mcpServers": {
+    "engram": {
+      "command": "npx",
+      "args": ["-y", "@jinhyuk9714/engram-mcp"]
+    }
+  }
+}
+```
+
+```bash
+npx -y @jinhyuk9714/engram-mcp
+```
+
+- If `DATABASE_URL` or `POSTGRES_*` is already set, Engram MCP uses that database directly.
+- If not, it bootstraps a local Docker PostgreSQL instance automatically on macOS and Linux.
+- Redis stays off by default, and semantic retrieval turns on when `OPENAI_API_KEY` is present.
+
+---
+
+## Repository quick start (interactive setup script)
 
 ```bash
 bash scripts/setup.sh
@@ -9,7 +34,7 @@ bash scripts/setup.sh
 # bash setup.sh
 ```
 
-Guides you through `.env` creation, `npm install`, and DB schema setup step by step.
+Guides you through `.env` creation, `npm install`, and DB schema setup step by step. Use this path for local development or HTTP self-hosting.
 
 ---
 
@@ -84,15 +109,32 @@ npm run backfill:embeddings
 
 ```bash
 cp .env.example .env
-# Edit .env: set DATABASE_URL, MEMENTO_ACCESS_KEY, and other required values
+# Edit .env: set DATABASE_URL or POSTGRES_*, MEMENTO_ACCESS_KEY, and other required values
 ```
 
-For the full list of environment variables, see [README.en.md — Configuration](README.en.md#10-configuration).
+For the full environment variable list and examples, see [.env.example](.env.example).
 
-## Starting the Server
+## Running
+
+### stdio MCP server
 
 ```bash
-node server.js
+npx -y @jinhyuk9714/engram-mcp
+```
+
+Inside the repository, this is equivalent:
+
+```bash
+node bin/engram-mcp.js
+```
+
+### HTTP self-host
+
+```bash
+npx -y @jinhyuk9714/engram-mcp serve
+
+# inside the repository
+npm start
 ```
 
 ## Tests
@@ -102,20 +144,51 @@ npm test
 
 # Only when PostgreSQL and DATABASE_URL are available
 npm run test:db
+
+# To verify Docker auto-bootstrap as well
+npm run test:e2e:docker
 ```
 
 `npm test` covers the local-safe suite. The temporal integration test is intentionally split into `npm run test:db` because it requires a live Postgres connection.
 
-On startup, the server logs the listening port, authentication status, session TTL, confirms `MemoryEvaluator` worker initialization, and begins NLI model preloading in the background (~30s on first download, ~1-2s from cache). Graceful shutdown on `SIGTERM` / `SIGINT` triggers `AutoReflect` for all active sessions, stops `MemoryEvaluator`, drains the PostgreSQL connection pool, and flushes access statistics.
+On startup, the HTTP server logs the listening port, authentication status, session TTL, confirms `MemoryEvaluator` worker initialization, and begins NLI model preloading in the background (~30s on first download, ~1-2s from cache). Graceful shutdown on `SIGTERM` / `SIGINT` triggers `AutoReflect` for all active sessions, stops `MemoryEvaluator`, drains the PostgreSQL connection pool, and flushes access statistics.
 
-## MCP Client Configuration
-
-Store the access key in an environment variable; do not commit plaintext credentials.
+## Claude Desktop / Claude Code configuration (stdio)
 
 ```json
 {
   "mcpServers": {
-    "memento": {
+    "engram": {
+      "command": "npx",
+      "args": ["-y", "@jinhyuk9714/engram-mcp"]
+    }
+  }
+}
+```
+
+### Injecting your own DB or embedding configuration
+
+```json
+{
+  "mcpServers": {
+    "engram": {
+      "command": "npx",
+      "args": ["-y", "@jinhyuk9714/engram-mcp"],
+      "env": {
+        "DATABASE_URL": "postgresql://user:password@db.example.com:5432/engram",
+        "OPENAI_API_KEY": "sk-..."
+      }
+    }
+  }
+}
+```
+
+### HTTP self-host configuration
+
+```json
+{
+  "mcpServers": {
+    "engram": {
       "type": "http",
       "url": "http://localhost:57332/mcp",
       "headers": {
@@ -126,33 +199,11 @@ Store the access key in an environment variable; do not commit plaintext credent
 }
 ```
 
-For external access, expose the service through a reverse proxy (TLS termination, rate limiting). Do not publish internal host addresses or port numbers in external documentation.
+Store the access key in an environment variable; do not commit plaintext credentials. For external access, expose the service through a reverse proxy (TLS termination, rate limiting). Do not publish internal host addresses or port numbers in external documentation.
 
-## Hook-Based Context Loading
+## Session-start guidance
 
-Engram's `instructions` field encourages the AI to use memory tools actively, but this alone doesn't automatically inject past memories at session start. With Claude Code hooks, you can ensure the AI loads relevant context at the beginning of every session.
-
-**Auto-load Core Memory on session start** (`~/.claude/settings.json`):
-
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -s -X POST http://localhost:57332/mcp -H 'Authorization: Bearer YOUR_KEY' -H 'Content-Type: application/json' -H 'mcp-session-id: ${MCP_SESSION_ID}' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"context\",\"arguments\":{}}}'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-Alternatively, add the following to your `CLAUDE.md` to have the AI load context on its own:
+Add the following to your project instructions or `CLAUDE.md`:
 
 ```markdown
 ## Session Start Rules
@@ -160,7 +211,7 @@ Alternatively, add the following to your `CLAUDE.md` to have the AI load context
 - Before debugging or writing code, call `recall(keywords=[relevant_keywords], type="error")` to surface related past learnings.
 ```
 
-`context` returns only high-importance fragments within your token budget, so it injects critical information without polluting the context window. Combining session hooks with `CLAUDE.md` instructions significantly reduces the "amnesia effect" where the AI behaves as if meeting you for the first time each session.
+`context` returns only high-importance fragments within your token budget, so it injects critical information without polluting the context window. Pairing stdio startup with these project instructions significantly reduces the "amnesia effect" where the AI behaves as if meeting you for the first time each session.
 
 ## MCP Protocol Version Negotiation
 

@@ -5,7 +5,7 @@
  * 작성일: 2026-02-23
  * 수정일: 2026-02-25
  *
- * 실행: psql -U nerdvana -d nerdvana_mcp -f memory-schema.sql
+ * 실행: psql -U $POSTGRES_USER -d $POSTGRES_DB -f lib/memory/memory-schema.sql
  */
 
 CREATE SCHEMA IF NOT EXISTS agent_memory;

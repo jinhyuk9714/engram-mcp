@@ -1,6 +1,31 @@
 # 설치 가이드
 
-## 빠른 시작 (대화형 설치 스크립트)
+## 원라인 사용 (권장)
+
+별도 `.env` 없이도 바로 붙일 수 있는 기본 경로다.
+
+```json
+{
+  "mcpServers": {
+    "engram": {
+      "command": "npx",
+      "args": ["-y", "@jinhyuk9714/engram-mcp"]
+    }
+  }
+}
+```
+
+```bash
+npx -y @jinhyuk9714/engram-mcp
+```
+
+- `DATABASE_URL` 또는 `POSTGRES_*`가 이미 있으면 그 DB를 그대로 사용한다.
+- 둘 다 없으면 macOS/Linux에서는 Docker 기반 로컬 PostgreSQL을 자동으로 띄운다.
+- Redis는 기본적으로 꺼져 있고, `OPENAI_API_KEY`가 있으면 시맨틱 검색이 활성화된다.
+
+---
+
+## 레포 기반 빠른 시작 (대화형 설치 스크립트)
 
 ```bash
 bash scripts/setup.sh
@@ -9,7 +34,7 @@ bash scripts/setup.sh
 # bash setup.sh
 ```
 
-.env 생성, npm install, DB 스키마 적용까지 단계별로 안내한다.
+.env 생성, npm install, DB 스키마 적용까지 단계별로 안내한다. 로컬 개발이나 HTTP self-host가 필요할 때 이 경로를 쓰면 된다.
 
 ---
 
@@ -65,15 +90,32 @@ npm run backfill:embeddings
 
 ```bash
 cp .env.example .env
-# .env 파일에서 DATABASE_URL, MEMENTO_ACCESS_KEY 등 필수 값 입력
+# .env 파일에서 DATABASE_URL 또는 POSTGRES_* 와 MEMENTO_ACCESS_KEY 등 필수 값 입력
 ```
 
-환경 변수 전체 목록은 [README.md — 환경 변수](README.md#환경-변수) 참조.
+환경 변수 전체 목록과 예시는 [.env.example](.env.example) 참조.
 
-## 서버 실행
+## 실행
+
+### stdio MCP 서버
 
 ```bash
-node server.js
+npx -y @jinhyuk9714/engram-mcp
+```
+
+레포 안에서는 아래도 동일하다.
+
+```bash
+node bin/engram-mcp.js
+```
+
+### HTTP self-host
+
+```bash
+npx -y @jinhyuk9714/engram-mcp serve
+
+# 레포 내부에서는
+npm start
 ```
 
 ## 테스트
@@ -83,18 +125,51 @@ npm test
 
 # PostgreSQL과 DATABASE_URL이 준비된 경우만
 npm run test:db
+
+# Docker 자동 부트스트랩까지 확인할 때
+npm run test:e2e:docker
 ```
 
 `npm test`는 로컬에서 바로 검증 가능한 테스트만 실행한다. temporal 통합 테스트는 Postgres 의존성이 있으므로 `npm run test:db`로 분리되어 있다.
 
-## Claude Code 연결
+## Claude Desktop / Claude Code 연결 (stdio)
 
 `~/.claude/settings.json` 또는 프로젝트 `.claude/settings.json`:
 
 ```json
 {
   "mcpServers": {
-    "memento": {
+    "engram": {
+      "command": "npx",
+      "args": ["-y", "@jinhyuk9714/engram-mcp"]
+    }
+  }
+}
+```
+
+### 외부 DB나 임베딩 API를 직접 주입할 때
+
+```json
+{
+  "mcpServers": {
+    "engram": {
+      "command": "npx",
+      "args": ["-y", "@jinhyuk9714/engram-mcp"],
+      "env": {
+        "DATABASE_URL": "postgresql://user:password@db.example.com:5432/engram",
+        "OPENAI_API_KEY": "sk-..."
+      }
+    }
+  }
+}
+```
+
+### HTTP self-host로 붙일 때
+
+```json
+{
+  "mcpServers": {
+    "engram": {
       "type": "http",
       "url": "http://localhost:57332/mcp",
       "headers": {
@@ -105,31 +180,7 @@ npm run test:db
 }
 ```
 
-## 훅 기반 Context 자동 로드
-
-engram-mcp는 `initialize` 응답의 `instructions` 필드에서 AI에게 기억 도구를 적극 사용하도록 권장하지만, 이것만으로는 세션 시작 시 과거 기억이 자동으로 주입되지 않는다. Claude Code 훅을 이용하면 AI가 매 세션마다 관련 기억을 능동적으로 불러오도록 강제할 수 있다.
-
-**세션 시작 시 Core Memory 자동 로드** (`~/.claude/settings.json`):
-
-```json
-{
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -s -X POST http://localhost:57332/mcp -H 'Authorization: Bearer YOUR_KEY' -H 'Content-Type: application/json' -H 'mcp-session-id: ${MCP_SESSION_ID}' -d '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"context\",\"arguments\":{}}}'"
-          }
-        ]
-      }
-    ]
-  }
-}
-```
-
-또는 `CLAUDE.md`에 아래 지시를 추가하면 AI가 세션 시작 시 스스로 `context` 도구를 호출한다:
+## 세션 시작 규칙
 
 ```markdown
 ## 세션 시작 규칙
@@ -137,6 +188,6 @@ engram-mcp는 `initialize` 응답의 `instructions` 필드에서 AI에게 기억
 - 에러 해결이나 코드 작업 전에는 `recall(keywords=[관련_키워드], type="error")`로 관련 기억을 먼저 확인한다.
 ```
 
-`context`는 중요도 높은 파편을 캡슐화하여 반환하므로 컨텍스트 오염 없이 핵심 정보만 주입된다. `recall`은 현재 작업과 관련된 파편을 키워드/시맨틱 검색으로 추가 로드한다. 세션 시작 훅과 `CLAUDE.md` 지시를 병행하면 AI가 처음 만나는 사람처럼 행동하는 현상이 크게 줄어든다.
+`context`는 중요도 높은 파편을 캡슐화하여 반환하므로 컨텍스트 오염 없이 핵심 정보만 주입된다. `recall`은 현재 작업과 관련된 파편을 키워드/시맨틱 검색으로 추가 로드한다.
 
 외부에서 접속할 때는 nginx 리버스 프록시를 통해 노출한다. 내부 IP나 내부 포트를 외부 문서에 직접 기재하지 않는다.

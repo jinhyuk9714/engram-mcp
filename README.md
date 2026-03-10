@@ -174,17 +174,36 @@ Engram MCP는 기억을 **1~3문장 정도의 원자적 파편**으로 저장하
 ### 요구사항
 
 - Node.js 20+
-- PostgreSQL 14+ with `pgvector`
+- Docker Desktop 또는 PostgreSQL 14+ with `pgvector`
 - Redis 6+ (선택)
 
-### 설치
+### 한 줄 사용 (stdio 기본)
+
+```bash
+npx -y @jinhyuk9714/engram-mcp
+```
+
+DB 연결 정보가 없으면 macOS/Linux에서 Docker 기반 로컬 PostgreSQL을 자동으로 준비합니다. MCP 클라이언트 설정 예시는 아래처럼 최소화할 수 있습니다.
+
+```json
+{
+  "mcpServers": {
+    "engram": {
+      "command": "npx",
+      "args": ["-y", "@jinhyuk9714/engram-mcp"]
+    }
+  }
+}
+```
+
+### 레포 기반 설치 / HTTP self-host
 
 ```bash
 npm install
 cp .env.example .env
 ```
 
-설치, 마이그레이션, 클라이언트 연결, 훅 설정은 **[INSTALL.md](INSTALL.md)** 를 참고하세요.
+설치, 마이그레이션, stdio 사용, HTTP self-host 연결은 **[INSTALL.md](INSTALL.md)** 를 참고하세요.
 
 ### 최소 설정 예시
 
@@ -192,11 +211,7 @@ cp .env.example .env
 PORT=57332
 MEMENTO_ACCESS_KEY=your-master-key
 
-POSTGRES_HOST=localhost
-POSTGRES_PORT=5432
-POSTGRES_DB=your_db
-POSTGRES_USER=your_user
-POSTGRES_PASSWORD=your_password
+DATABASE_URL=postgresql://your_user:your_password@localhost:5432/your_db
 
 REDIS_ENABLED=false
 ```
@@ -211,10 +226,18 @@ OPENAI_API_KEY=sk-...
 ### 실행
 
 ```bash
+npx -y @jinhyuk9714/engram-mcp
+```
+
+기본 실행은 stdio MCP 서버입니다. 기존 HTTP 서버는 아래처럼 유지됩니다.
+
+```bash
+npx -y @jinhyuk9714/engram-mcp serve
+# 또는 레포 내부에서
 npm start
 ```
 
-기본 포트는 `57332`입니다.
+HTTP 기본 포트는 `57332`입니다.
 
 ---
 
@@ -222,14 +245,16 @@ npm start
 
 ```bash
 npm start
-npm lint
+npm run lint
 npm test
 npm run test:db
+npm run test:e2e:docker
 npm run backfill:embeddings
 ```
 
 - `npm test`: 로컬에서 바로 실행 가능한 단위 테스트 + 안전한 통합 테스트
 - `npm run test:db`: PostgreSQL 연결이 필요한 통합 테스트
+- `npm run test:e2e:docker`: Docker 자동 부트스트랩 E2E 테스트
 - `npm run backfill:embeddings`: 기존 파편 임베딩 일괄 생성
 
 ---
@@ -285,8 +310,11 @@ npm run backfill:embeddings
 ## 프로젝트 구조
 
 ```text
+bin/engram-mcp.js         stdio/serve CLI 진입점
 server.js                 HTTP 서버 진입점
+lib/cli/                  런타임 환경 해석 및 Docker 부트스트랩
 lib/jsonrpc.js            JSON-RPC 파싱 및 메서드 디스패치
+lib/mcp/                  공통 MCP surface 및 stdio 서버
 lib/tool-registry.js      MCP 도구 등록 및 라우팅
 lib/tools/                MCP 도구 구현
 lib/memory/               기억 시스템 핵심 로직
@@ -337,5 +365,3 @@ npm run test:db
 ## 마무리
 
 Engram MCP는 “기억을 저장하는 서버”보다 **기억을 검색 가능하고, 시간에 맞고, 관리 가능한 형태로 유지하는 시스템**에 가깝습니다. 대화를 통째로 붙들기보다, 필요한 파편만 정확하게 꺼내는 장기 기억 계층이 필요하다면 이 레포가 좋은 출발점이 될 수 있습니다.
-
-
