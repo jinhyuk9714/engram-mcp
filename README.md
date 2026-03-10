@@ -33,6 +33,8 @@
 
 **[설치 가이드 →](INSTALL.md)**
 
+> 이 저장소는 현재 유지보수 상태로 남겨두며, Codex 중심 후속 레포는 [engram-codex](https://github.com/jinhyuk9714/engram-codex)에서 이어간다.
+
 > 이 저장소는 Apache-2.0으로 배포된 원본 코드베이스를 바탕으로 새 Git 이력과 브랜딩으로 재구성했다. 출처 및 변경 고지는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 정리했다.
 
 ## 테스트
