@@ -36,7 +36,6 @@ Engram MCP is a long-term memory server for MCP (Model Context Protocol) agents.
 
 - [Installation Guide](INSTALL.en.md)
 - [Korean README](README.md)
-- [Simple README](README.simple.md)
 - [Third-Party Notices](THIRD_PARTY_NOTICES.md)
 - [License](LICENSE)
 
@@ -324,7 +323,6 @@ lib/http/                 HTTP/SSE utilities
 lib/logging/              Audit logs and access history
 config/memory.js          Ranking, TTL, GC, and pagination settings
 INSTALL.md                Korean installation guide
-INSTALL.en.md             English installation guide
 docs/                     Additional design documents
 ```
 
