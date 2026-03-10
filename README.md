@@ -209,12 +209,14 @@ cp .env.example .env
 
 ```env
 PORT=57332
-MEMENTO_ACCESS_KEY=your-master-key
+ENGRAM_ACCESS_KEY=your-master-key
 
 DATABASE_URL=postgresql://your_user:your_password@localhost:5432/your_db
 
 REDIS_ENABLED=false
 ```
+
+인증 키 이름은 `ENGRAM_ACCESS_KEY`로 바뀌었습니다. 이전 인증용 환경 변수와 커스텀 헤더 이름은 더 이상 지원하지 않습니다.
 
 시맨틱 검색과 자동 링크를 쓰려면 임베딩 provider를 추가로 설정하세요.
 

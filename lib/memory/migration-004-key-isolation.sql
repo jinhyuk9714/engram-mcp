@@ -2,7 +2,7 @@
 -- 작성자: 최진호 / 2026-03-03
 --
 -- 격리 모델:
---   key_id IS NULL  → 마스터 키(MEMENTO_ACCESS_KEY)로 저장된 기억 (마스터만 조회 가능)
+--   key_id IS NULL  → 마스터 키(ENGRAM_ACCESS_KEY)로 저장된 기억 (마스터만 조회 가능)
 --   key_id = 'xxx'  → 해당 API 키로 저장된 기억 (그 키만 조회 가능)
 
 BEGIN;

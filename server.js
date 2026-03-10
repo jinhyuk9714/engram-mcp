@@ -5,7 +5,7 @@
  * 작성일: 2026-01-30
  *
  * 인증 방식:
- * 1. 세션 초기화(initialize) 시 MEMENTO_ACCESS_KEY 검증
+ * 1. 세션 초기화(initialize) 시 ENGRAM_ACCESS_KEY 검증
  * 2. 또는 모든 요청에 Authorization: Bearer <key> 헤더 포함
  * 3. 인증 성공 시 README.md를 환영 메시지로 반환
  */
@@ -630,7 +630,7 @@ const server               = http.createServer(async (req, res) => {
     res.statusCode         = 204;
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, MCP-Session-Id, memento-access-key");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, MCP-Session-Id, engram-access-key");
     res.setHeader("Access-Control-Expose-Headers", "MCP-Session-Id");
     res.setHeader("Access-Control-Max-Age", "86400");
     res.end();
@@ -653,7 +653,7 @@ server.listen(PORT, () => {
   if (ACCESS_KEY) {
     console.log("Authentication: ENABLED");
   } else {
-    console.log("Authentication: DISABLED (set MEMENTO_ACCESS_KEY to enable)");
+    console.log("Authentication: DISABLED (set ENGRAM_ACCESS_KEY to enable)");
   }
 
   console.log(`Session TTL: ${SESSION_TTL_MS / 60000} minutes`);

@@ -90,8 +90,10 @@ npm run backfill:embeddings
 
 ```bash
 cp .env.example .env
-# .env 파일에서 DATABASE_URL 또는 POSTGRES_* 와 MEMENTO_ACCESS_KEY 등 필수 값 입력
+# .env 파일에서 DATABASE_URL 또는 POSTGRES_* 와 ENGRAM_ACCESS_KEY 등 필수 값 입력
 ```
+
+`ENGRAM_ACCESS_KEY`가 인증용 기본 이름이다. 기존 인증용 환경 변수와 커스텀 헤더 이름은 더 이상 지원하지 않는다.
 
 환경 변수 전체 목록과 예시는 [.env.example](.env.example) 참조.
 
@@ -173,7 +175,7 @@ npm run test:e2e:docker
       "type": "http",
       "url": "http://localhost:57332/mcp",
       "headers": {
-        "Authorization": "Bearer YOUR_MEMENTO_ACCESS_KEY"
+        "Authorization": "Bearer YOUR_ENGRAM_ACCESS_KEY"
       }
     }
   }

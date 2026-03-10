@@ -237,12 +237,14 @@ For installation, migrations, stdio usage, and HTTP self-host setup, see **[INST
 
 ```env
 PORT=57332
-MEMENTO_ACCESS_KEY=your-master-key
+ENGRAM_ACCESS_KEY=your-master-key
 
 DATABASE_URL=postgresql://your_user:your_password@localhost:5432/your_db
 
 REDIS_ENABLED=false
 ```
+
+The authentication key name is now `ENGRAM_ACCESS_KEY`. The previous authentication env var and custom header names are no longer supported.
 
 To enable semantic retrieval and automatic linking, add an embedding provider:
 

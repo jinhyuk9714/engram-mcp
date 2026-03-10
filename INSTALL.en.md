@@ -109,8 +109,10 @@ npm run backfill:embeddings
 
 ```bash
 cp .env.example .env
-# Edit .env: set DATABASE_URL or POSTGRES_*, MEMENTO_ACCESS_KEY, and other required values
+# Edit .env: set DATABASE_URL or POSTGRES_*, ENGRAM_ACCESS_KEY, and other required values
 ```
+
+`ENGRAM_ACCESS_KEY` is now the canonical authentication variable. The previous authentication env var and custom header names are no longer supported.
 
 For the full environment variable list and examples, see [.env.example](.env.example).
 
@@ -192,7 +194,7 @@ On startup, the HTTP server logs the listening port, authentication status, sess
       "type": "http",
       "url": "http://localhost:57332/mcp",
       "headers": {
-        "Authorization": "Bearer ${MEMENTO_ACCESS_KEY}"
+        "Authorization": "Bearer ${ENGRAM_ACCESS_KEY}"
       }
     }
   }

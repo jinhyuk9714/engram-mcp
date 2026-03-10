@@ -66,7 +66,7 @@ info "Server"
 PORT=$(ask "Port" "57332")
 SESSION_TTL=$(ask "Session TTL (minutes)" "60")
 LOG_DIR=$(ask "Log directory" "/var/log/mcp")
-MEMENTO_ACCESS_KEY=$(ask_secret "Access key (MEMENTO_ACCESS_KEY, leave blank to disable auth)")
+ENGRAM_ACCESS_KEY=$(ask_secret "Access key (ENGRAM_ACCESS_KEY, leave blank to disable auth)")
 
 echo
 
@@ -162,10 +162,10 @@ SESSION_TTL_MINUTES=${SESSION_TTL}
 LOG_DIR=${LOG_DIR}
 EOF
 
-if [[ -n "$MEMENTO_ACCESS_KEY" ]]; then
-  echo "MEMENTO_ACCESS_KEY=${MEMENTO_ACCESS_KEY}" >> "$ENV_FILE"
+if [[ -n "$ENGRAM_ACCESS_KEY" ]]; then
+  echo "ENGRAM_ACCESS_KEY=${ENGRAM_ACCESS_KEY}" >> "$ENV_FILE"
 else
-  echo "# MEMENTO_ACCESS_KEY=" >> "$ENV_FILE"
+  echo "# ENGRAM_ACCESS_KEY=" >> "$ENV_FILE"
 fi
 
 cat >> "$ENV_FILE" <<EOF

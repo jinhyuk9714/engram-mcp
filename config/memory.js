@@ -49,7 +49,7 @@ export const MEMORY_CONFIG = {
     intervalMs  : 5000,
     retryLimit  : 3,
     retryDelayMs: 2000,
-    queueKey    : "memento:embedding_queue"
+    queueKey    : "engram:embedding_queue"
   },
   /** 컨텍스트 주입 설정 */
   contextInjection: {
