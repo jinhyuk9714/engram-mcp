@@ -8,7 +8,6 @@ Engram MCP는 MCP(Model Context Protocol) 기반 에이전트를 위한 **장기
 
 - [설치 가이드](INSTALL.md)
 - [영문 README](README.en.md)
-- [간단 버전](README.simple.md)
 - [서드파티 고지](THIRD_PARTY_NOTICES.md)
 - [라이선스](LICENSE)
 
