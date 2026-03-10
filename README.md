@@ -336,9 +336,4 @@ npm run test:db
 
 Engram MCP는 “기억을 저장하는 서버”보다 **기억을 검색 가능하고, 시간에 맞고, 관리 가능한 형태로 유지하는 시스템**에 가깝습니다. 대화를 통째로 붙들기보다, 필요한 파편만 정확하게 꺼내는 장기 기억 계층이 필요하다면 이 레포가 좋은 출발점이 될 수 있습니다.
 
----
 
-<p align="center">
-  Made by <a href="mailto:jinho.von.choi@nerdvana.kr">Jinho Choi</a> &nbsp;|&nbsp;
-  <a href="https://buymeacoffee.com/jinho.von.choi">Buy me a coffee</a>
-</p>
