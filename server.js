@@ -71,6 +71,14 @@ import {
 
 /** JSON-RPC */
 import { jsonRpcError, dispatchJsonRpc } from "./lib/jsonrpc.js";
+import {
+  ADMIN_BASE,
+  getAdminImageMeta,
+  handleAdminApiRequest,
+  isAdminImageRequest,
+  isAdminUiRequest
+} from "./lib/http/admin.js";
+import { registerRecurringJobs } from "./lib/http/startup.js";
 
 /** 도구 (통계 저장용) */
 import { saveAccessStats } from "./lib/tools/index.js";
@@ -558,9 +566,7 @@ const server               = http.createServer(async (req, res) => {
    * GET /v1/internal/model/nothing  → assets/admin/index.html
    * GET /v1/internal/model/nothing/images/:file → assets/images/:file
    * ======================================== */
-  const ADMIN_BASE = "/v1/internal/model/nothing";
-
-  if (req.method === "GET" && (url.pathname === ADMIN_BASE || url.pathname === `${ADMIN_BASE}/`)) {
+  if (isAdminUiRequest(req.method, url.pathname)) {
     const htmlPath = path.join(__dirname, "assets", "admin", "index.html");
     fs.readFile(htmlPath, (err, data) => {
       if (err) { res.statusCode = 404; res.end("Admin UI not found"); return; }
@@ -572,16 +578,13 @@ const server               = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === "GET" && url.pathname.startsWith(`${ADMIN_BASE}/images/`)) {
-    /** path.basename 으로 path traversal 차단 */
-    const filename = path.basename(url.pathname);
-    const imgPath  = path.join(__dirname, "assets", "images", filename);
+  if (isAdminImageRequest(req.method, url.pathname)) {
+    const imageMeta = getAdminImageMeta(url.pathname, __dirname);
+    const imgPath = imageMeta.filePath;
     fs.readFile(imgPath, (err, data) => {
       if (err) { res.statusCode = 404; res.end("Image not found"); return; }
-      const ext = path.extname(filename).toLowerCase();
-      const mime = { ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml" }[ext] || "application/octet-stream";
       res.statusCode = 200;
-      res.setHeader("Content-Type", mime);
+      res.setHeader("Content-Type", imageMeta.mimeType);
       res.setHeader("Cache-Control", "public, max-age=86400");
       res.end(data);
     });
@@ -598,189 +601,25 @@ const server               = http.createServer(async (req, res) => {
    * PUT    /v1/internal/model/nothing/keys/:id      → 상태 변경 { status }
    * DELETE /v1/internal/model/nothing/keys/:id      → 키 삭제
    * ======================================== */
-  if (url.pathname.startsWith(`${ADMIN_BASE}/`)) {
-    res.setHeader("Access-Control-Allow-Origin", req.headers.origin || "*");
-    res.setHeader("Content-Type", "application/json; charset=utf-8");
-
-    /** 마스터 키 인증 (POST /auth 는 검증 자체가 목적이므로 통과 후 처리) */
-    const isAuthEndpoint = req.method === "POST" && url.pathname === `${ADMIN_BASE}/auth`;
-    if (!isAuthEndpoint && !validateMasterKey(req)) {
-      res.statusCode = 401;
-      res.end(JSON.stringify({ error: "Unauthorized" }));
-      return;
+  if (await handleAdminApiRequest({
+    req,
+    res,
+    pathname: url.pathname,
+    origin: req.headers.origin,
+    deps: {
+      validateMasterKey,
+      readJsonBody,
+      getPrimaryPool,
+      listApiKeys,
+      createApiKey,
+      updateApiKeyStatus,
+      deleteApiKey,
+      getSessionCounts,
+      redisClient,
+      osImpl: os,
+      statfsSync: fs.statfsSync
     }
-
-    /** POST /auth */
-    if (req.method === "POST" && url.pathname === `${ADMIN_BASE}/auth`) {
-      if (validateMasterKey(req)) {
-        res.statusCode = 200;
-        res.end(JSON.stringify({ ok: true }));
-      } else {
-        res.statusCode = 401;
-        res.end(JSON.stringify({ error: "Invalid admin key" }));
-      }
-      return;
-    }
-
-    /** GET /stats */
-    if (req.method === "GET" && url.pathname === `${ADMIN_BASE}/stats`) {
-      try {
-        const pool = getPrimaryPool();
-
-        const [fragR, callR, keyR] = await Promise.all([
-          pool.query("SELECT COUNT(*) AS total FROM agent_memory.fragments"),
-          pool.query(`SELECT COALESCE(SUM(call_count),0) AS total
-                        FROM agent_memory.api_key_usage
-                       WHERE usage_date = CURRENT_DATE`),
-          pool.query("SELECT COUNT(*) AS total FROM agent_memory.api_keys WHERE status='active'"),
-        ]);
-
-        const cpus    = os.cpus();
-        const cpuPct  = Math.min(100, Math.round((os.loadavg()[0] / cpus.length) * 100));
-        const memPct  = Math.round(((os.totalmem() - os.freemem()) / os.totalmem()) * 100);
-
-        let diskPct = 0;
-        try {
-          const d = fs.statfsSync("/");
-          diskPct = Math.round(((d.blocks - d.bfree) / d.blocks) * 100);
-        } catch (_) { /* non-posix */ }
-
-        let dbSizeBytes = 0;
-        try {
-          const { rows: [sr] } = await pool.query(
-            "SELECT pg_database_size(current_database()) AS bytes"
-          );
-          dbSizeBytes = parseInt(sr.bytes);
-        } catch (_) { /* ignore */ }
-
-        const redisStat = (redisClient && redisClient.status === "ready")
-          ? "connected" : "disconnected";
-
-        res.statusCode = 200;
-        res.end(JSON.stringify({
-          fragments:     parseInt(fragR.rows[0].total),
-          sessions:      getSessionCounts().total,
-          apiCallsToday: parseInt(callR.rows[0].total),
-          activeKeys:    parseInt(keyR.rows[0].total),
-          uptime:        Math.floor(process.uptime()),
-          nodeVersion:   process.version,
-          system:        { cpu: cpuPct, memory: memPct, disk: diskPct, dbSizeBytes },
-          db:            "connected",
-          redis:         redisStat,
-        }));
-      } catch (err) {
-        console.error("[Admin] /stats error:", err.message);
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: err.message }));
-      }
-      return;
-    }
-
-    /** GET /activity */
-    if (req.method === "GET" && url.pathname === `${ADMIN_BASE}/activity`) {
-      try {
-        const pool = getPrimaryPool();
-        const { rows } = await pool.query(`
-          SELECT f.id, f.topic, f.type, f.agent_id, f.key_id, f.created_at,
-                 LEFT(f.content, 80) AS preview,
-                 k.name              AS key_name,
-                 k.key_prefix
-          FROM  agent_memory.fragments f
-          LEFT JOIN agent_memory.api_keys k ON k.id = f.key_id
-          ORDER BY f.created_at DESC
-          LIMIT 10
-        `);
-        res.statusCode = 200;
-        res.end(JSON.stringify(rows));
-      } catch (err) {
-        console.error("[Admin] /activity error:", err.message);
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: err.message }));
-      }
-      return;
-    }
-
-    /** GET /keys */
-    if (req.method === "GET" && url.pathname === `${ADMIN_BASE}/keys`) {
-      try {
-        const keys = await listApiKeys();
-        res.statusCode = 200;
-        res.end(JSON.stringify(keys));
-      } catch (err) {
-        console.error("[Admin] listApiKeys error:", err.message);
-        res.statusCode = 500;
-        res.end(JSON.stringify({ error: err.message }));
-      }
-      return;
-    }
-
-    /** POST /keys */
-    if (req.method === "POST" && url.pathname === `${ADMIN_BASE}/keys`) {
-      try {
-        const body = await readJsonBody(req);
-        if (!body.name || typeof body.name !== "string") {
-          res.statusCode = 400;
-          res.end(JSON.stringify({ error: "name is required" }));
-          return;
-        }
-        const key = await createApiKey({
-          name:        body.name.trim(),
-          permissions: Array.isArray(body.permissions) ? body.permissions : ["read"],
-          daily_limit: Number(body.daily_limit) || 10000
-        });
-        res.statusCode = 201;
-        res.end(JSON.stringify(key));
-      } catch (err) {
-        if (err.statusCode === 413) {
-          res.statusCode = 413;
-          res.end(JSON.stringify({ error: "Payload too large" }));
-          return;
-        }
-        console.error("[Admin] createApiKey error:", err.message);
-        res.statusCode = err.message.includes("unique") ? 409 : 500;
-        res.end(JSON.stringify({ error: err.message }));
-      }
-      return;
-    }
-
-    /** PUT /keys/:id */
-    const putMatch = url.pathname.match(/^\/v1\/internal\/model\/nothing\/keys\/([^/]+)$/);
-    if (req.method === "PUT" && putMatch) {
-      try {
-        const body   = await readJsonBody(req);
-        const result = await updateApiKeyStatus(putMatch[1], body.status);
-        res.statusCode = 200;
-        res.end(JSON.stringify(result));
-      } catch (err) {
-        if (err.statusCode === 413) {
-          res.statusCode = 413;
-          res.end(JSON.stringify({ error: "Payload too large" }));
-          return;
-        }
-        console.error("[Admin] updateApiKeyStatus error:", err.message);
-        res.statusCode = err.message === "Key not found" ? 404 : 400;
-        res.end(JSON.stringify({ error: err.message }));
-      }
-      return;
-    }
-
-    /** DELETE /keys/:id */
-    const delMatch = url.pathname.match(/^\/v1\/internal\/model\/nothing\/keys\/([^/]+)$/);
-    if (req.method === "DELETE" && delMatch) {
-      try {
-        await deleteApiKey(delMatch[1]);
-        res.statusCode = 204;
-        res.end();
-      } catch (err) {
-        console.error("[Admin] deleteApiKey error:", err.message);
-        res.statusCode = err.message === "Key not found" ? 404 : 500;
-        res.end(JSON.stringify({ error: err.message }));
-      }
-      return;
-    }
-
-    res.statusCode = 404;
-    res.end(JSON.stringify({ error: "Not found" }));
+  })) {
     return;
   }
 
@@ -819,44 +658,17 @@ server.listen(PORT, () => {
 
   console.log(`Session TTL: ${SESSION_TTL_MS / 60000} minutes`);
 
-  setInterval(cleanupExpiredSessions, 5 * 60 * 1000);
-  setInterval(cleanupExpiredOAuthData, 5 * 60 * 1000);
-  console.log("Session cleanup: Running every 5 minutes");
-
-  // 세션 수 메트릭 업데이트 (1분마다)
-  setInterval(() => {
-    const { streamable: _ss, legacy: _ls } = getSessionCounts();
-    updateSessionCounts(_ss, _ls);
-  }, 60 * 1000);
-  console.log("Metrics: Session counts updated every minute");
-
-  setInterval(() => saveAccessStats(LOG_DIR), 10 * 60 * 1000);
-  console.log("Access stats: Saving every 10 minutes");
-
-  /** 기억 시스템 주기적 유지보수 (GC, 감쇠, 병합, stale 정리) */
-  const CONSOLIDATE_MS = parseInt(process.env.CONSOLIDATE_INTERVAL_MS || "21600000", 10);
-  setInterval(async () => {
-    try {
-      const mm     = MemoryManager.getInstance();
-      const result = await mm.consolidate();
-      console.log(`[Consolidate] done: expired=${result.expiredDeleted}, decay=${result.importanceDecay}, merged=${result.duplicatesMerged}`);
-    } catch (err) {
-      console.error(`[Consolidate] failed: ${err.message}`);
-    }
-  }, CONSOLIDATE_MS).unref();
-  console.log(`Consolidate: Running every ${CONSOLIDATE_MS / 3600000}h`);
-
-  /** 임베딩 백필 (30분 간격, 배치 20개) */
-  setInterval(async () => {
-    try {
-      const mm    = MemoryManager.getInstance();
-      const count = await mm.store.generateMissingEmbeddings(20);
-      if (count > 0) console.log(`[EmbeddingBackfill] Generated ${count} embeddings`);
-    } catch (err) {
-      console.error(`[EmbeddingBackfill] failed: ${err.message}`);
-    }
-  }, 30 * 60_000).unref();
-  console.log("EmbeddingBackfill: Running every 30min (batch 20)");
+  registerRecurringJobs({
+    env: process.env,
+    logDir: LOG_DIR,
+    cleanupExpiredSessions,
+    cleanupExpiredOAuthData,
+    getSessionCounts,
+    updateSessionCounts,
+    saveAccessStats,
+    memoryManagerFactory: () => MemoryManager.getInstance(),
+    consoleImpl: console
+  });
 
   /** Phase 2: 비동기 지식 품질 평가 워커 시작 */
   getMemoryEvaluator().start().catch(err => {

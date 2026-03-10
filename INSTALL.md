@@ -73,6 +73,17 @@ cp .env.example .env
 node server.js
 ```
 
+## 테스트
+
+```bash
+npm test
+
+# PostgreSQL과 DATABASE_URL이 준비된 경우만
+npm run test:db
+```
+
+`npm test`는 로컬에서 바로 검증 가능한 테스트만 실행한다. temporal 통합 테스트는 Postgres 의존성이 있으므로 `npm run test:db`로 분리되어 있다.
+
 ## Claude Code 연결
 
 `~/.claude/settings.json` 또는 프로젝트 `.claude/settings.json`:

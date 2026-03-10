@@ -311,7 +311,7 @@ MCP 클라이언트 설정에 아래를 추가하면 된다.
 
 ## 10. 시스템 구조
 
-![시스템 아키텍처](assets/images/memento_architecture.svg)
+![시스템 아키텍처](assets/images/engram_architecture.svg)
 
 ---
 

@@ -35,6 +35,17 @@
 
 > 이 저장소는 Apache-2.0으로 배포된 원본 코드베이스를 바탕으로 새 Git 이력과 브랜딩으로 재구성했다. 출처 및 변경 고지는 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)에 정리했다.
 
+## 테스트
+
+```bash
+npm test
+
+# PostgreSQL과 DATABASE_URL이 준비된 경우만
+npm run test:db
+```
+
+`npm test`는 로컬에서 바로 돌릴 수 있는 단위 테스트와 안전한 통합 테스트만 실행한다. `npm run test:db`는 `tests/integration/temporal.test.js`를 대상으로 하며 Postgres 연결이 필요하다.
+
 ## 개요
 
 Engram MCP는 MCP(Model Context Protocol) 기반 에이전트 장기 기억 서버다. 세션이 종료되어도 중요한 사실, 결정, 에러 패턴, 절차를 유지하고 다음 세션에서 복원한다.
@@ -61,7 +72,7 @@ MCP 프로토콜 버전 2025-11-25, 2025-06-18, 2025-03-26, 2024-11-05를 지원
 
 ## 시스템 구조
 
-![시스템 아키텍처](assets/images/memento_architecture.svg)
+![시스템 아키텍처](assets/images/engram_architecture.svg)
 
 ```
 server.js  (HTTP 서버)

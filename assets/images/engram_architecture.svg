@@ -1,0 +1,290 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" font-family="'Times New Roman', Georgia, serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3366aa"/>
+    </marker>
+    <marker id="arrow-green" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2a7a2a"/>
+    </marker>
+    <marker id="arrow-orange" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#cc6600"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="720" fill="white"/>
+
+  <!-- Title -->
+  <text x="480" y="32" text-anchor="middle" font-size="16" font-weight="bold" fill="#222">Fig. 1. Engram System Architecture</text>
+
+  <!-- ============================================ -->
+  <!-- LAYER 1: MCP Transport Layer -->
+  <!-- ============================================ -->
+  <rect x="40" y="52" width="880" height="90" rx="4" fill="#f0f4f8" stroke="#8899aa" stroke-width="1.2" stroke-dasharray="6,3"/>
+  <text x="56" y="72" font-size="11" fill="#556677" font-style="italic">MCP Transport Layer</text>
+
+  <!-- LLM Agent -->
+  <rect x="60" y="82" width="120" height="48" rx="3" fill="#dde4ed" stroke="#7788aa" stroke-width="1"/>
+  <text x="120" y="103" text-anchor="middle" font-size="11" fill="#334">LLM Agent</text>
+  <text x="120" y="118" text-anchor="middle" font-size="9" fill="#667">(Claude, GPT-4)</text>
+
+  <!-- MCP Server -->
+  <rect x="280" y="82" width="160" height="48" rx="3" fill="#c8d8e8" stroke="#5577aa" stroke-width="1.2"/>
+  <text x="360" y="103" text-anchor="middle" font-size="11" fill="#223" font-weight="bold">MCP Server</text>
+  <text x="360" y="118" text-anchor="middle" font-size="9" fill="#556">HTTP + JSON-RPC 2.0</text>
+
+  <!-- Tool boxes -->
+  <g font-size="9" fill="#334">
+    <rect x="500" y="78" width="76" height="24" rx="2" fill="#e8edf3" stroke="#8899aa" stroke-width="0.8"/>
+    <text x="538" y="94" text-anchor="middle">remember</text>
+    <rect x="584" y="78" width="56" height="24" rx="2" fill="#e8edf3" stroke="#8899aa" stroke-width="0.8"/>
+    <text x="612" y="94" text-anchor="middle">recall</text>
+    <rect x="648" y="78" width="64" height="24" rx="2" fill="#e8edf3" stroke="#8899aa" stroke-width="0.8"/>
+    <text x="680" y="94" text-anchor="middle">context</text>
+    <rect x="500" y="108" width="64" height="24" rx="2" fill="#e8edf3" stroke="#8899aa" stroke-width="0.8"/>
+    <text x="532" y="124" text-anchor="middle">reflect</text>
+    <rect x="572" y="108" width="56" height="24" rx="2" fill="#e8edf3" stroke="#8899aa" stroke-width="0.8"/>
+    <text x="600" y="124" text-anchor="middle">forget</text>
+    <rect x="636" y="108" width="60" height="24" rx="2" fill="#e8edf3" stroke="#8899aa" stroke-width="0.8"/>
+    <text x="666" y="124" text-anchor="middle">amend</text>
+    <rect x="704" y="108" width="48" height="24" rx="2" fill="#e8edf3" stroke="#8899aa" stroke-width="0.8"/>
+    <text x="728" y="124" text-anchor="middle">link</text>
+  </g>
+  <text x="620" y="72" text-anchor="middle" font-size="10" fill="#556677" font-style="italic">Tool Endpoints</text>
+
+  <!-- Arrow: Agent -> MCP Server -->
+  <line x1="180" y1="106" x2="278" y2="106" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- Arrow: MCP Server -> Tools -->
+  <line x1="440" y1="106" x2="498" y2="106" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <!-- ============================================ -->
+  <!-- LAYER 2: Memory Subsystem -->
+  <!-- ============================================ -->
+  <rect x="40" y="158" width="880" height="340" rx="4" fill="#fafcf5" stroke="#88aa77" stroke-width="1.2" stroke-dasharray="6,3"/>
+  <text x="56" y="178" font-size="11" fill="#557744" font-style="italic">Memory Subsystem</text>
+
+  <!-- Fragment Manager -->
+  <rect x="60" y="190" width="200" height="130" rx="3" fill="#eef3e8" stroke="#77aa66" stroke-width="1.2"/>
+  <text x="160" y="210" text-anchor="middle" font-size="11" fill="#334" font-weight="bold">Fragment Manager</text>
+  <line x1="70" y1="218" x2="250" y2="218" stroke="#aabb99" stroke-width="0.6"/>
+
+  <!-- Fragment types -->
+  <g font-size="9" fill="#445">
+    <rect x="75" y="226" width="52" height="18" rx="2" fill="#d8e8cc" stroke="#99bb88" stroke-width="0.6"/>
+    <text x="101" y="239" text-anchor="middle">fact</text>
+    <rect x="133" y="226" width="58" height="18" rx="2" fill="#d8e8cc" stroke="#99bb88" stroke-width="0.6"/>
+    <text x="162" y="239" text-anchor="middle">decision</text>
+    <rect x="197" y="226" width="48" height="18" rx="2" fill="#d8e8cc" stroke="#99bb88" stroke-width="0.6"/>
+    <text x="221" y="239" text-anchor="middle">error</text>
+    <rect x="75" y="250" width="72" height="18" rx="2" fill="#d8e8cc" stroke="#99bb88" stroke-width="0.6"/>
+    <text x="111" y="263" text-anchor="middle">preference</text>
+    <rect x="153" y="250" width="72" height="18" rx="2" fill="#d8e8cc" stroke="#99bb88" stroke-width="0.6"/>
+    <text x="189" y="263" text-anchor="middle">procedure</text>
+    <rect x="75" y="274" width="56" height="18" rx="2" fill="#d8e8cc" stroke="#99bb88" stroke-width="0.6"/>
+    <text x="103" y="287" text-anchor="middle">relation</text>
+  </g>
+  <text x="160" y="308" text-anchor="middle" font-size="8.5" fill="#778866">id, topic, keywords, importance,</text>
+  <text x="160" y="318" text-anchor="middle" font-size="8.5" fill="#778866">ttl_tier, scope, valid_to</text>
+
+  <!-- 3-Tier Retrieval Engine -->
+  <rect x="300" y="190" width="360" height="130" rx="3" fill="#e8eef8" stroke="#5577bb" stroke-width="1.2"/>
+  <text x="480" y="210" text-anchor="middle" font-size="11" fill="#223" font-weight="bold">Three-Tier Retrieval Engine</text>
+  <line x1="310" y1="218" x2="650" y2="218" stroke="#99aacc" stroke-width="0.6"/>
+
+  <!-- L1 -->
+  <rect x="315" y="226" width="100" height="44" rx="2" fill="#d0ddef" stroke="#6688bb" stroke-width="0.8"/>
+  <text x="365" y="243" text-anchor="middle" font-size="10" fill="#223" font-weight="bold">L1</text>
+  <text x="365" y="256" text-anchor="middle" font-size="8.5" fill="#445">Redis SINTER</text>
+  <text x="365" y="266" text-anchor="middle" font-size="7.5" fill="#778">microseconds</text>
+
+  <!-- L2 -->
+  <rect x="430" y="226" width="100" height="44" rx="2" fill="#d0ddef" stroke="#6688bb" stroke-width="0.8"/>
+  <text x="480" y="243" text-anchor="middle" font-size="10" fill="#223" font-weight="bold">L2</text>
+  <text x="480" y="256" text-anchor="middle" font-size="8.5" fill="#445">PG GIN Index</text>
+  <text x="480" y="266" text-anchor="middle" font-size="7.5" fill="#778">array overlap</text>
+
+  <!-- L3 -->
+  <rect x="545" y="226" width="100" height="44" rx="2" fill="#d0ddef" stroke="#6688bb" stroke-width="0.8"/>
+  <text x="595" y="243" text-anchor="middle" font-size="10" fill="#223" font-weight="bold">L3</text>
+  <text x="595" y="256" text-anchor="middle" font-size="8.5" fill="#445">pgvector HNSW</text>
+  <text x="595" y="266" text-anchor="middle" font-size="7.5" fill="#778">semantic search</text>
+
+  <!-- Parallel bracket for L2+L3 -->
+  <text x="480" y="284" text-anchor="middle" font-size="8" fill="#5577aa">L2 + L3 parallel execution</text>
+
+  <!-- RRF -->
+  <rect x="405" y="290" width="150" height="24" rx="2" fill="#c0d0e8" stroke="#4466aa" stroke-width="1"/>
+  <text x="480" y="306" text-anchor="middle" font-size="9.5" fill="#223">RRF Merge (k=60)</text>
+
+  <!-- Arrow: L1 -> RRF -->
+  <line x1="365" y1="270" x2="430" y2="292" stroke="#5577aa" stroke-width="0.8" marker-end="url(#arrow-blue)"/>
+  <!-- Arrow: L2 -> RRF -->
+  <line x1="480" y1="270" x2="480" y2="288" stroke="#5577aa" stroke-width="0.8" marker-end="url(#arrow-blue)"/>
+  <!-- Arrow: L3 -> RRF -->
+  <line x1="595" y1="270" x2="530" y2="292" stroke="#5577aa" stroke-width="0.8" marker-end="url(#arrow-blue)"/>
+
+  <!-- Async Memory Pipeline -->
+  <rect x="60" y="340" width="600" height="68" rx="3" fill="#fdf5e6" stroke="#cc9944" stroke-width="1.2"/>
+  <text x="76" y="358" font-size="11" fill="#664" font-weight="bold">Asynchronous Memory Pipeline</text>
+
+  <!-- Pipeline steps -->
+  <rect x="76" y="366" width="90" height="30" rx="2" fill="#f5ecd0" stroke="#bb9944" stroke-width="0.8"/>
+  <text x="121" y="385" text-anchor="middle" font-size="9" fill="#443">remember()</text>
+
+  <rect x="196" y="366" width="100" height="30" rx="2" fill="#f5ecd0" stroke="#bb9944" stroke-width="0.8"/>
+  <text x="246" y="381" text-anchor="middle" font-size="9" fill="#443">Immediate</text>
+  <text x="246" y="392" text-anchor="middle" font-size="9" fill="#443">Persist (PG)</text>
+
+  <rect x="326" y="366" width="100" height="30" rx="2" fill="#f5ecd0" stroke="#bb9944" stroke-width="0.8"/>
+  <text x="376" y="381" text-anchor="middle" font-size="9" fill="#443">Redis Queue</text>
+  <text x="376" y="392" text-anchor="middle" font-size="9" fill="#443">(BRPOP)</text>
+
+  <rect x="456" y="366" width="100" height="30" rx="2" fill="#f5ecd0" stroke="#bb9944" stroke-width="0.8"/>
+  <text x="506" y="381" text-anchor="middle" font-size="9" fill="#443">Embedding</text>
+  <text x="506" y="392" text-anchor="middle" font-size="9" fill="#443">Worker</text>
+
+  <!-- Pipeline arrows -->
+  <line x1="166" y1="381" x2="194" y2="381" stroke="#cc6600" stroke-width="1" marker-end="url(#arrow-orange)"/>
+  <line x1="296" y1="381" x2="324" y2="381" stroke="#cc6600" stroke-width="1" marker-end="url(#arrow-orange)"/>
+  <line x1="426" y1="381" x2="454" y2="381" stroke="#cc6600" stroke-width="1" marker-end="url(#arrow-orange)"/>
+
+  <!-- Embedding model label -->
+  <text x="556" y="360" font-size="8" fill="#887744" font-style="italic">text-embedding-3-small</text>
+  <text x="556" y="370" font-size="8" fill="#887744" font-style="italic">(1536-dim)</text>
+
+  <!-- Forgetting & Consolidation -->
+  <rect x="700" y="190" width="200" height="218" rx="3" fill="#f8f0f0" stroke="#aa7777" stroke-width="1.2"/>
+  <text x="800" y="210" text-anchor="middle" font-size="11" fill="#553" font-weight="bold">Forgetting &amp;</text>
+  <text x="800" y="224" text-anchor="middle" font-size="11" fill="#553" font-weight="bold">Consolidation</text>
+  <line x1="710" y1="232" x2="890" y2="232" stroke="#ccaaaa" stroke-width="0.6"/>
+
+  <g font-size="9" fill="#554444">
+    <text x="720" y="250">TTL Tier Transitions</text>
+    <text x="730" y="264" font-size="8" fill="#887777">hot -> warm -> cold</text>
+    <text x="720" y="282">Importance Decay</text>
+    <text x="730" y="296" font-size="8" fill="#887777">exponential, type-specific</text>
+    <text x="720" y="314">Contradiction Detection</text>
+    <text x="730" y="328" font-size="8" fill="#887777">cosine -> mDeBERTa -> LLM</text>
+    <text x="720" y="346">Duplicate Merging</text>
+    <text x="730" y="360" font-size="8" fill="#887777">similarity > 0.85</text>
+    <text x="720" y="378">Expired Fragment GC</text>
+    <text x="730" y="392" font-size="8" fill="#887777">12-stage pipeline</text>
+  </g>
+
+  <!-- Context Injection -->
+  <rect x="60" y="420" width="600" height="64" rx="3" fill="#f0eef8" stroke="#8877aa" stroke-width="1.2"/>
+  <text x="76" y="440" font-size="11" fill="#443" font-weight="bold">Context Injection &amp; Session Lifecycle</text>
+
+  <g font-size="9" fill="#554466">
+    <rect x="76" y="450" width="110" height="24" rx="2" fill="#e8e4f0" stroke="#9988bb" stroke-width="0.8"/>
+    <text x="131" y="466" text-anchor="middle">Core Memory</text>
+
+    <rect x="196" y="450" width="130" height="24" rx="2" fill="#e8e4f0" stroke="#9988bb" stroke-width="0.8"/>
+    <text x="261" y="466" text-anchor="middle">Type-Slot Allocation</text>
+
+    <rect x="336" y="450" width="130" height="24" rx="2" fill="#e8e4f0" stroke="#9988bb" stroke-width="0.8"/>
+    <text x="401" y="466" text-anchor="middle">Working Memory</text>
+
+    <rect x="476" y="450" width="170" height="24" rx="2" fill="#e8e4f0" stroke="#9988bb" stroke-width="0.8"/>
+    <text x="561" y="466" text-anchor="middle">reflect() at session end</text>
+  </g>
+
+  <!-- Arrows between context items -->
+  <line x1="186" y1="462" x2="194" y2="462" stroke="#8877aa" stroke-width="0.8" marker-end="url(#arrow)"/>
+  <line x1="326" y1="462" x2="334" y2="462" stroke="#8877aa" stroke-width="0.8" marker-end="url(#arrow)"/>
+  <line x1="466" y1="462" x2="474" y2="462" stroke="#8877aa" stroke-width="0.8" marker-end="url(#arrow)"/>
+
+  <!-- ============================================ -->
+  <!-- LAYER 3: Storage Layer -->
+  <!-- ============================================ -->
+  <rect x="40" y="510" width="880" height="130" rx="4" fill="#fff8f0" stroke="#aa8866" stroke-width="1.2" stroke-dasharray="6,3"/>
+  <text x="56" y="530" font-size="11" fill="#886644" font-style="italic">Storage Layer</text>
+
+  <!-- Redis -->
+  <rect x="60" y="540" width="260" height="84" rx="3" fill="#fce8e8" stroke="#cc6666" stroke-width="1.2"/>
+  <text x="190" y="560" text-anchor="middle" font-size="12" fill="#883333" font-weight="bold">Redis</text>
+  <line x1="70" y1="566" x2="310" y2="566" stroke="#ddaaaa" stroke-width="0.6"/>
+  <g font-size="9" fill="#664444">
+    <text x="80" y="582">L1 Inverted Index (Sets + SINTER)</text>
+    <text x="80" y="596">Embedding Queue (BRPOP)</text>
+    <text x="80" y="610">Working Memory (session-scoped)</text>
+  </g>
+
+  <!-- PostgreSQL -->
+  <rect x="380" y="540" width="260" height="84" rx="3" fill="#e6eef6" stroke="#5577aa" stroke-width="1.2"/>
+  <text x="510" y="560" text-anchor="middle" font-size="12" fill="#224488" font-weight="bold">PostgreSQL</text>
+  <line x1="390" y1="566" x2="630" y2="566" stroke="#99aacc" stroke-width="0.6"/>
+  <g font-size="9" fill="#334466">
+    <text x="395" y="582">fragments table (persistent store)</text>
+    <text x="395" y="596">GIN Index (keywords array)</text>
+    <text x="395" y="610">fragment_links, fragment_versions</text>
+  </g>
+
+  <!-- pgvector -->
+  <rect x="700" y="540" width="200" height="84" rx="3" fill="#e6f0e6" stroke="#559955" stroke-width="1.2"/>
+  <text x="800" y="560" text-anchor="middle" font-size="12" fill="#226622" font-weight="bold">pgvector</text>
+  <line x1="710" y1="566" x2="890" y2="566" stroke="#99cc99" stroke-width="0.6"/>
+  <g font-size="9" fill="#335533">
+    <text x="715" y="582">HNSW Index</text>
+    <text x="715" y="596">embedding vector(1536)</text>
+    <text x="715" y="610">cosine similarity search</text>
+  </g>
+
+  <!-- ============================================ -->
+  <!-- Connection arrows between layers -->
+  <!-- ============================================ -->
+
+  <!-- MCP Server -> Fragment Manager -->
+  <path d="M 360 130 L 360 148 L 160 148 L 160 188" fill="none" stroke="#555" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- MCP Server -> Retrieval Engine -->
+  <path d="M 400 130 L 400 148 L 480 148 L 480 188" fill="none" stroke="#555" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Fragment Manager -> Async Pipeline -->
+  <line x1="160" y1="320" x2="160" y2="338" stroke="#555" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- Retrieval -> Storage (L1 -> Redis) -->
+  <path d="M 340 314 L 340 330 L 100 330 L 100 420" fill="none" stroke="#cc6666" stroke-width="0.8" stroke-dasharray="4,2"/>
+
+  <!-- Retrieval -> Storage (L2 -> PG) -->
+  <path d="M 480 314 L 480 330 L 510 330 L 510 420" fill="none" stroke="#5577aa" stroke-width="0.8" stroke-dasharray="4,2"/>
+
+  <!-- Retrieval -> Storage (L3 -> pgvector) -->
+  <path d="M 560 314 L 560 330 L 800 330 L 800 420" fill="none" stroke="#559955" stroke-width="0.8" stroke-dasharray="4,2"/>
+
+  <!-- Async Pipeline -> Redis Queue -->
+  <line x1="190" y1="408" x2="190" y2="538" stroke="#cc6666" stroke-width="1" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+
+  <!-- Async Pipeline -> PG persist -->
+  <line x1="350" y1="408" x2="450" y2="538" stroke="#5577aa" stroke-width="1" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+
+  <!-- Embedding Worker -> pgvector -->
+  <path d="M 556 396 L 620 430 L 750 500 L 780 538" fill="none" stroke="#559955" stroke-width="1" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+
+  <!-- Forgetting -> Storage -->
+  <path d="M 800 408 L 800 440 L 510 440 L 510 538" fill="none" stroke="#aa7777" stroke-width="0.8" marker-end="url(#arrow)" stroke-dasharray="4,2"/>
+
+  <!-- Legend -->
+  <g transform="translate(40,660)">
+    <text x="0" y="0" font-size="9" fill="#555" font-style="italic">Legend:</text>
+    <line x1="50" y1="-4" x2="80" y2="-4" stroke="#555" stroke-width="1.2" marker-end="url(#arrow)"/>
+    <text x="88" y="0" font-size="8.5" fill="#555">data flow</text>
+    <line x1="160" y1="-4" x2="190" y2="-4" stroke="#555" stroke-width="1" stroke-dasharray="4,2"/>
+    <text x="198" y="0" font-size="8.5" fill="#555">storage access</text>
+    <rect x="290" y="-12" width="14" height="14" rx="1" fill="#eef3e8" stroke="#77aa66" stroke-width="0.8"/>
+    <text x="310" y="0" font-size="8.5" fill="#555">memory management</text>
+    <rect x="430" y="-12" width="14" height="14" rx="1" fill="#e8eef8" stroke="#5577bb" stroke-width="0.8"/>
+    <text x="450" y="0" font-size="8.5" fill="#555">retrieval</text>
+    <rect x="520" y="-12" width="14" height="14" rx="1" fill="#fdf5e6" stroke="#cc9944" stroke-width="0.8"/>
+    <text x="540" y="0" font-size="8.5" fill="#555">async pipeline</text>
+    <rect x="640" y="-12" width="14" height="14" rx="1" fill="#f8f0f0" stroke="#aa7777" stroke-width="0.8"/>
+    <text x="660" y="0" font-size="8.5" fill="#555">forgetting/consolidation</text>
+  </g>
+
+  <!-- Copyright-like note -->
+  <text x="920" y="710" text-anchor="end" font-size="7.5" fill="#aaa">Engram: Fragment-Based Memory System for LLM Agents via MCP</text>
+</svg>

@@ -92,6 +92,17 @@ For the full list of environment variables, see [README.en.md — Configuration]
 node server.js
 ```
 
+## Tests
+
+```bash
+npm test
+
+# Only when PostgreSQL and DATABASE_URL are available
+npm run test:db
+```
+
+`npm test` covers the local-safe suite. The temporal integration test is intentionally split into `npm run test:db` because it requires a live Postgres connection.
+
 On startup, the server logs the listening port, authentication status, session TTL, confirms `MemoryEvaluator` worker initialization, and begins NLI model preloading in the background (~30s on first download, ~1-2s from cache). Graceful shutdown on `SIGTERM` / `SIGINT` triggers `AutoReflect` for all active sessions, stops `MemoryEvaluator`, drains the PostgreSQL connection pool, and flushes access statistics.
 
 ## MCP Client Configuration

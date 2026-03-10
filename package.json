@@ -25,7 +25,6 @@
     "winston-daily-rotate-file": "^5.0.0"
   },
   "devDependencies": {
-    "eslint": "^9.0.0",
-    "jest": "^30.2.0"
+    "eslint": "^9.0.0"
   }
 }

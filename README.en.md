@@ -35,6 +35,17 @@
 
 > This repository repackages an Apache-2.0-licensed upstream codebase with fresh Git history and new branding. Source attribution and modification notes are recorded in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
+## Testing
+
+```bash
+npm test
+
+# Only when PostgreSQL and DATABASE_URL are available
+npm run test:db
+```
+
+`npm test` runs the unit suite plus safe local integration checks. `npm run test:db` is reserved for `tests/integration/temporal.test.js` and requires a reachable Postgres database.
+
 ---
 
 ## Overview
@@ -131,7 +142,7 @@ The system decomposes into three structural layers: the HTTP transport layer, th
 
 ### 2.1 System Architecture Diagram
 
-![System Architecture](assets/images/memento_architecture.svg)
+![System Architecture](assets/images/engram_architecture.svg)
 
 ### 2.2 HTTP Transport Layer
 
